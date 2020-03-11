@@ -57,15 +57,22 @@ public class AuthorizeController {
 
         if (githubUser != null && githubUser.getName() != null) {
             //登录成功，写cookie和session
-            User user = new User();
+
             String TOKEN = UUID.randomUUID().toString();
-            user.setToken(TOKEN);
-            user.setName(githubUser.getName());
-            user.setAccountId(String.valueOf(githubUser.getId()));
-            user.setGmtCreate(System.currentTimeMillis());
-            user.setGmtModified(user.getGmtCreate());
-            user.setAvatarUrl(githubUser.getAvatar_url());
-            userMapper.insert(user);
+            if (userMapper.findByAccountId(String.valueOf(githubUser.getId())) != null) {
+                Integer flag = userMapper.updateUserByAccountId(TOKEN,
+                        String.valueOf(githubUser.getId()));
+
+            } else {
+                User user = new User();
+                user.setToken(TOKEN);
+                user.setName(githubUser.getName());
+                user.setAccountId(String.valueOf(githubUser.getId()));
+                user.setGmtCreate(System.currentTimeMillis());
+                user.setGmtModified(user.getGmtCreate());
+                user.setAvatarUrl(githubUser.getAvatar_url());
+                userMapper.insert(user);
+            }
             //登录成功，写cookie和session
             response.addCookie(new Cookie("token", TOKEN));
             return "redirect:/";

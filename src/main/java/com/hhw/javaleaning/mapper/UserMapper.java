@@ -4,6 +4,7 @@ import com.hhw.javaleaning.model.User;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 
 /**
@@ -25,4 +26,10 @@ public interface UserMapper {
 
     @Select("select * from user where id=#{id}")
     User findById(Integer id);
+
+    @Select("select * from user where account_id=#{accountId}")
+    User findByAccountId(String accountId);
+
+    @Update("update user set token=#{token} where account_id=#{accountId}")
+    Integer updateUserByAccountId(String token, String accountId);
 }
