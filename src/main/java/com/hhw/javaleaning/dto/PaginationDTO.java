@@ -34,7 +34,7 @@ public class PaginationDTO {
         } else {
             totalPage = totalCount / size + 1;
         }
-        System.out.println(totalPage);
+
 
         if (page < 1) {
             page = 1;
