@@ -2,8 +2,11 @@ package com.hhw.javaleaning.service;
 
 import com.hhw.javaleaning.mapper.UserMapper;
 import com.hhw.javaleaning.model.User;
+import com.hhw.javaleaning.model.UserExample;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * @author hhw
@@ -17,17 +20,23 @@ public class UserService {
 
 
     public void creatOrupdate(User user) {
-        User dbuser = userMapper.findByAccountId(user.getAccountId());
-        if (dbuser == null) {
+
+        UserExample example = new UserExample();
+        example.createCriteria().andAccountIdEqualTo(user.getAccountId());
+        List<User> dbusrs = userMapper.selectByExample(example);
+        if (dbusrs.size() == 0) {
             user.setGmtCreate(System.currentTimeMillis());
             user.setGmtModified(user.getGmtCreate());
             userMapper.insert(user);
         } else {
-            dbuser.setAvatarUrl(user.getAvatarUrl());
-            dbuser.setGmtModified(System.currentTimeMillis());
-            dbuser.setToken(user.getToken());
-            dbuser.setName(user.getName());
-            userMapper.updateUserByAccountId(dbuser);
+            UserExample userExample = new UserExample();
+            userExample.createCriteria().andIdEqualTo(dbusrs.get(0).getId());
+            User updateUser = new User();
+            updateUser.setAvatarUrl(user.getAvatarUrl());
+            updateUser.setGmtModified(System.currentTimeMillis());
+            updateUser.setToken(user.getToken());
+            updateUser.setName(user.getName());
+            userMapper.updateByExampleSelective(updateUser, userExample);
         }
     }
 }
