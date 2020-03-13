@@ -2,6 +2,8 @@ package com.hhw.javaleaning.service;
 
 import com.hhw.javaleaning.dto.PaginationDTO;
 import com.hhw.javaleaning.dto.QuestionDTO;
+import com.hhw.javaleaning.exception.CustomizeErrorCode;
+import com.hhw.javaleaning.exception.CustomizeException;
 import com.hhw.javaleaning.mapper.QuestionMapper;
 import com.hhw.javaleaning.mapper.UserMapper;
 import com.hhw.javaleaning.model.Question;
@@ -105,6 +107,9 @@ public class QuestionService {
 
     public QuestionDTO getById(Integer id) {
         Question question = questionMapper.selectByPrimaryKey(id);
+        if(question==null){
+            throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
+        }
         QuestionDTO questionDTO = new QuestionDTO();
         BeanUtils.copyProperties(question, questionDTO);
         questionDTO.setUser(userMapper.selectByPrimaryKey(question.getCreator()));
@@ -124,7 +129,10 @@ public class QuestionService {
             record.setTag(question.getTag());
             QuestionExample questionExample=new QuestionExample();
             questionExample.createCriteria().andIdEqualTo(question.getId());
-            questionMapper.updateByExampleSelective(record,questionExample);
+            int updated=questionMapper.updateByExampleSelective(record,questionExample);
+            if(updated!=1){
+                throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
+            }
         }
     }
 }
