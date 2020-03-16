@@ -25,10 +25,12 @@ public class UserService {
         example.createCriteria().andAccountIdEqualTo(user.getAccountId());
         List<User> dbusrs = userMapper.selectByExample(example);
         if (dbusrs.size() == 0) {
+            System.out.println("查无此人");
             user.setGmtCreate(System.currentTimeMillis());
             user.setGmtModified(user.getGmtCreate());
             userMapper.insert(user);
         } else {
+            System.out.println("更新信息");
             UserExample userExample = new UserExample();
             userExample.createCriteria().andIdEqualTo(dbusrs.get(0).getId());
             User updateUser = new User();

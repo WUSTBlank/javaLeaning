@@ -4,6 +4,7 @@ import com.hhw.javaleaning.dto.PaginationDTO;
 import com.hhw.javaleaning.dto.QuestionDTO;
 import com.hhw.javaleaning.exception.CustomizeErrorCode;
 import com.hhw.javaleaning.exception.CustomizeException;
+import com.hhw.javaleaning.mapper.QuestionExtMapper;
 import com.hhw.javaleaning.mapper.QuestionMapper;
 import com.hhw.javaleaning.mapper.UserMapper;
 import com.hhw.javaleaning.model.Question;
@@ -26,6 +27,9 @@ public class QuestionService {
 
     @Autowired(required = false)
     private QuestionMapper questionMapper;
+
+    @Autowired(required = false)
+    private QuestionExtMapper questionExtMapper;
 
     @Autowired(required = false)
     private UserMapper userMapper;
@@ -71,7 +75,7 @@ public class QuestionService {
         Integer offset = size * (page - 1);
         QuestionExample example = new QuestionExample();
         example.createCriteria().andCreatorEqualTo(userId);
-        Integer totalCount = (int)questionMapper.countByExample(example);
+        Integer totalCount = (int) questionMapper.countByExample(example);
         PaginationDTO paginationDTO = new PaginationDTO();
         paginationDTO.setPage(page);
         paginationDTO.setPagination(totalCount, size);
@@ -107,7 +111,7 @@ public class QuestionService {
 
     public QuestionDTO getById(Integer id) {
         Question question = questionMapper.selectByPrimaryKey(id);
-        if(question==null){
+        if (question == null) {
             throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
         }
         QuestionDTO questionDTO = new QuestionDTO();
@@ -127,12 +131,19 @@ public class QuestionService {
             record.setTitle(question.getTitle());
             record.setDescription(question.getDescription());
             record.setTag(question.getTag());
-            QuestionExample questionExample=new QuestionExample();
+            QuestionExample questionExample = new QuestionExample();
             questionExample.createCriteria().andIdEqualTo(question.getId());
-            int updated=questionMapper.updateByExampleSelective(record,questionExample);
-            if(updated!=1){
+            int updated = questionMapper.updateByExampleSelective(record, questionExample);
+            if (updated != 1) {
                 throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
             }
         }
+    }
+
+    public void incView(Integer id) {
+        Question record = new Question();
+        record.setId(id);
+        record.setViewCount(1);
+        questionExtMapper.incView(record);
     }
 }
