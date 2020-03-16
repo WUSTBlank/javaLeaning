@@ -20,10 +20,15 @@
 
     </resultMap>
     <update id="incView" parameterType="com.hhw.javaleaning.model.Question">
-
     update QUESTION
     set
     VIEW_COUNT =VIEW_COUNT + #{viewCount,jdbcType=INTEGER}
     where ID = #{id,jdbcType=INTEGER}
   </update>
+    <update id="incCommentCount" parameterType="com.hhw.javaleaning.model.Question">
+    update QUESTION
+    set
+    COMMENT_COUNT =COMMENT_COUNT + #{commentCount,jdbcType=INTEGER}
+    where ID = #{id,jdbcType=INTEGER}
+    </update>
 </mapper>

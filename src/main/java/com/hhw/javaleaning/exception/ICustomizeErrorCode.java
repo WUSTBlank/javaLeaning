@@ -6,4 +6,5 @@ package com.hhw.javaleaning.exception;
  */
 public interface ICustomizeErrorCode {
     String getMessage();
+    Integer getCode();
 }
